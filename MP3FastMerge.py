@@ -80,36 +80,20 @@ def read_frames(frames, fname, verbose=False):
 
 #returns raw bytes of merged files
 def mergeTwoMP3(files):
-
-    PAT = re.compile(r'^[\[\]:0-9f+]*$')
-    if __name__ == "__main__":
+      PAT = re.compile(r'^[\[\]:0-9f+]*$')
       import sys, getopt
-      #def usage():
-       # print("usage: mp3cat.py [-v] expr [file ...] > new.mp3")
-        #sys.exit(2)
-      #try:
-      #  (opts, args) = getopt.getopt(sys.argv[1:], "v")
-      #except getopt.GetoptError:
-        #usage()
       verbose = False
-      #for (k, v) in opts:
-      #  if k == "-v": verbose = True
-      #if len(args) < 2: usage()
       expr = 'f[0:]'
-      #if not PAT.match(expr):
-      #  print('illegal expr: %r' % expr)
-      #  sys.exit(1)
-      #
       allframes = []
       for fname in files:
         read_frames(allframes, fname, verbose)
-        #fp.close()
       if expr:
-        outFile = open('output.mp3', 'wb')
+        oo = []
         for f in eval(expr, {'f':allframes}):
-            #sys.stdout.write(str(f))
             #outFile.write(f)
-            #outFile.close()
-            outFile.write(f)
+            oo.append(f)
+        return oo
 
-mergeTwoMP3(['13.mp3','15.mp3'])
+
+
+
