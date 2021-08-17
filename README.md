@@ -8,5 +8,5 @@ This library can do the same tasks pyDub can do in less than a second or so.
 
 # Usage
 ```
-mergeTwoMP3(['13.mp3','15.mp3'])
+mergeTwoMP3(['one.mp3','two.mp3'])
 ```
