@@ -8,6 +8,7 @@
 import sys, re, fileinput
 from struct import unpack
 stderr = sys.stderr
+import os
 
 # read MPEG frames
 BITRATE1 = [0, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320]
@@ -15,7 +16,10 @@ BITRATE2 = [0, 8, 16, 24, 32, 40, 48, 56, 64, 80, 96, 112, 128, 144, 160]
 SAMPLERATE1 = [44100, 48000, 32000]
 SAMPLERATE2 = [22050, 24000, 16000]
 SAMPLERATE25 = [11025, 12000, 8000]
-def read_frames(frames, fname, verbose=False):
+
+
+def read_frames(oo,frames, fname, verbose=False):
+    oo = b''
     with open(fname, 'rb') as fp:
       while 1:
         x = fp.read(4)
@@ -27,8 +31,6 @@ def read_frames(frames, fname, verbose=False):
           if verbose:
             print('TAG', repr(data), file=stderr)
         elif x.startswith(b'ID3'):
-          # ID3 - ignored
-          #int   byte
           version = bytes(x[3])+fp.read(1)
           flags = ord(fp.read(1))
           s = [ c & 127 for c in fp.read(4) ]
@@ -71,29 +73,18 @@ def read_frames(frames, fname, verbose=False):
           else:
             framesize = 72000 * bitrate / samplerate + pad
           data = bytes(x)+fp.read(int(framesize)-4)
-          if verbose:
-            print('Frame%d: bitrate=%dk, samplerate=%d, framesize=%d' % \
-                  (len(frames), bitrate, samplerate, framesize), file=stderr)
-          frames.append(data)
-    return
 
+          frames += data
+    return oo
 
 #returns raw bytes of merged files
 def mergeTwoMP3(files):
       PAT = re.compile(r'^[\[\]:0-9f+]*$')
       import sys, getopt
-      verbose = False
-      expr = 'f[0:]'
-      allframes = []
+      allframes = bytearray([])
+      oo = b''
       for fname in files:
-        read_frames(allframes, fname, verbose)
-      if expr:
-        oo = []
-        for f in eval(expr, {'f':allframes}):
-            #outFile.write(f)
-            oo.append(f)
-        return oo
+        read_frames(oo,allframes, fname)
 
-
-
+      return bytes(allframes)
 
